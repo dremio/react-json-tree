@@ -76,14 +76,17 @@ export default class JSONNestedNode extends React.Component {
     level: PropTypes.number.isRequired,
     sortObjectKeys: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
     isCircular: PropTypes.bool,
-    expandable: PropTypes.bool
+    expandable: PropTypes.bool,
+    onNodeClick: PropTypes.func,
+    shouldToggleExpand: PropTypes.func
   };
 
   static defaultProps = {
     data: [],
     circularCache: [],
     level: 0,
-    expandable: true
+    expandable: true,
+    shouldToggleExpand: () => true
   };
 
   constructor(props) {
@@ -93,6 +96,8 @@ export default class JSONNestedNode extends React.Component {
     const expanded = props.shouldExpandNode && !props.isCircular ?
         props.shouldExpandNode(props.keyPath, props.data, props.level) : false;
 
+    this.handleNodeClick = this.handleNodeClick.bind(this);
+    this.handleExpandClick = this.handleExpandClick.bind(this);
     this.handleMouseOver = this.handleMouseOver.bind(this);
     this.handleMouseOut = this.handleMouseOut.bind(this);
 
@@ -137,7 +142,7 @@ export default class JSONNestedNode extends React.Component {
     const stylingArgs = [keyPath, nodeType, expanded, expandable, hover];
 
     return hideRoot ? (
-      <li {...styling('rootNode', ...stylingArgs)}>
+      <li {...styling('rootNode', ...stylingArgs)} onClick={this.handleNodeClick}>
         <ul {...styling('rootNodeChildren', ...stylingArgs)}>
           {renderedChildren}
         </ul>
@@ -145,6 +150,7 @@ export default class JSONNestedNode extends React.Component {
     ) : (
       <li
         {...styling('nestedNode', ...stylingArgs)}
+        onClick={this.handleNodeClick}
         onMouseOver={this.handleMouseOver}
         onMouseOut={this.handleMouseOut}
       >
@@ -153,18 +159,18 @@ export default class JSONNestedNode extends React.Component {
             styling={styling}
             nodeType={nodeType}
             expanded={expanded}
-            onClick={this.handleClick}
+            onClick={this.handleExpandClick}
           />
         }
         <label
           {...styling(['label', 'nestedNodeLabel'], ...stylingArgs)}
-          onClick={expandable && this.handleClick}
+          onClick={expandable && this.handleExpandClick}
         >
           {labelRenderer(...stylingArgs)}
         </label>
         <span
           {...styling('nestedNodeItemString', ...stylingArgs)}
-          onClick={expandable && this.handleClick}
+          onClick={expandable && this.handleExpandClick}
         >
           {renderedItemString}
         </span>
@@ -175,7 +181,19 @@ export default class JSONNestedNode extends React.Component {
     );
   }
 
-  handleClick = () => this.setState({ expanded: !this.state.expanded });
+  handleNodeClick(e) {
+    const { onNodeClick, keyPath, nodeType } = this.props;
+    e.stopPropagation();
+    if (onNodeClick) {
+      onNodeClick(e, keyPath, nodeType);
+    }
+  }
+
+  handleExpandClick(e) {
+    if (this.props.shouldToggleExpand(e)) {
+      this.setState({ expanded: !this.state.expanded });
+    }
+  }
 
   handleMouseOver(e) {
     e.stopPropagation();

@@ -14,7 +14,8 @@ export default class JSONValueNode extends React.Component {
     ).isRequired,
     valueRenderer: PropTypes.func.isRequired,
     value: PropTypes.any,
-    valueGetter: PropTypes.func
+    valueGetter: PropTypes.func,
+    onNodeClick: PropTypes.func
   };
 
   static defaultProps = {
@@ -24,6 +25,7 @@ export default class JSONValueNode extends React.Component {
   constructor() {
     super();
     this.state = { hover: false };
+    this.handleNodeClick = this.handleNodeClick.bind(this);
     this.handleMouseOver = this.handleMouseOver.bind(this);
     this.handleMouseOut = this.handleMouseOut.bind(this);
   }
@@ -36,6 +38,7 @@ export default class JSONValueNode extends React.Component {
     return (
       <li
         {...styling('value', nodeType, keyPath, hover)}
+        onClick={this.handleNodeClick}
         onMouseOver={this.handleMouseOver}
         onMouseOut={this.handleMouseOut}
       >
@@ -47,6 +50,14 @@ export default class JSONValueNode extends React.Component {
         </span>
       </li>
     );
+  }
+
+  handleNodeClick(e) {
+    const { onNodeClick, keyPath, nodeType } = this.props;
+    e.stopPropagation();
+    if (onNodeClick) {
+      onNodeClick(e, keyPath, nodeType);
+    }
   }
 
   handleMouseOver(e) {
