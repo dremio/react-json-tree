@@ -65,6 +65,7 @@
   "dependencies": {
     "babel-plugin-transform-runtime": "^6.7.5",
     "babel-runtime": "^6.6.1",
+    "eslint-config-airbnb": "^8.0.0",
     "react-base16-styling": "^0.4.1",
     "react-pure-render": "^1.0.2"
   },

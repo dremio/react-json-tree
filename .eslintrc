@@ -8,6 +8,7 @@
   },
   "rules": {
     "comma-dangle": 0,
+    "arrow-body-style": 0,
     "jsx-quotes": [1, "prefer-single"],
     // "react/jsx-uses-react": 2,
     // "react/jsx-uses-vars": 2,

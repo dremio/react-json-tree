@@ -1,11 +1,6 @@
 import React, { PropTypes } from 'react';
 import JSONNestedNode from './JSONNestedNode';
-
-// Returns the "n Items" string for this node,
-// generating and caching it if it hasn't been created yet.
-function createItemString(data) {
-  return `${data.length} ${data.length !== 1 ? 'items' : 'item'}`;
-}
+import { createItemString } from './utils/stringUtils';
 
 // Configures <JSONNestedNode> to render an Array
 const JSONArrayNode = ({ data, ...props }) =>
@@ -15,7 +10,7 @@ const JSONArrayNode = ({ data, ...props }) =>
     nodeType='Array'
     nodeTypeIndicator='[]'
     createItemString={createItemString}
-    expandable={data.length > 0}
+    expandable
   />;
 
 JSONArrayNode.propTypes = {
