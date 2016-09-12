@@ -46,7 +46,7 @@ export default class JSONValueNode extends React.Component {
           {labelRenderer(keyPath, nodeType, false, false)}
         </label>
         <span {...styling('valueText', nodeType, keyPath)}>
-          {valueRenderer(valueGetter(value), value, ...keyPath)}
+          &nbsp;{valueRenderer(valueGetter(value), value, ...keyPath)}
         </span>
       </li>
     );

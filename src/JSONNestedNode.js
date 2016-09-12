@@ -4,6 +4,7 @@ import getCollectionEntries from './getCollectionEntries';
 import JSONNode from './JSONNode';
 import ItemRange from './ItemRange';
 import shouldPureComponentUpdate from 'react-pure-render/function';
+import { createItemString } from './utils/stringUtils';
 
 /**
  * Renders nested values (eg. objects, arrays, lists, etc.)
@@ -65,7 +66,6 @@ export default class JSONNestedNode extends React.Component {
     nodeType: PropTypes.string.isRequired,
     data: PropTypes.any,
     hideRoot: PropTypes.bool.isRequired,
-    createItemString: PropTypes.func.isRequired,
     styling: PropTypes.func.isRequired,
     collectionLimit: PropTypes.number,
     keyPath: PropTypes.arrayOf(
@@ -117,9 +117,7 @@ export default class JSONNestedNode extends React.Component {
       nodeType,
       data,
       hideRoot,
-      createItemString,
       styling,
-      collectionLimit,
       keyPath,
       labelRenderer,
       expandable
@@ -137,11 +135,13 @@ export default class JSONNestedNode extends React.Component {
       nodeType,
       data,
       itemType,
-      createItemString(data, collectionLimit)
+      createItemString(data, expanded)
     );
     const stylingArgs = [keyPath, nodeType, expanded, expandable, hover];
+    const isArray = data instanceof Array;
+    const expandedClosedObjIcon = isArray ? ']' : '}';
 
-    return hideRoot ? (
+    const treeNode = hideRoot ? (
       <li {...styling('rootNode', ...stylingArgs)} onClick={this.handleNodeClick}>
         <ul {...styling('rootNodeChildren', ...stylingArgs)}>
           {renderedChildren}
@@ -154,14 +154,6 @@ export default class JSONNestedNode extends React.Component {
         onMouseOver={this.handleMouseOver}
         onMouseOut={this.handleMouseOut}
       >
-        {expandable &&
-          <JSONArrow
-            styling={styling}
-            nodeType={nodeType}
-            expanded={expanded}
-            onClick={this.handleExpandClick}
-          />
-        }
         <label
           {...styling(['label', 'nestedNodeLabel'], ...stylingArgs)}
           onClick={expandable && this.handleExpandClick}
@@ -177,7 +169,21 @@ export default class JSONNestedNode extends React.Component {
         <ul {...styling('nestedNodeChildren', ...stylingArgs)}>
           {renderedChildren}
         </ul>
+        {expanded ? expandedClosedObjIcon : ''}
       </li>
+    );
+    return (
+      <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+        {expandable && !hideRoot &&
+          <JSONArrow
+            styling={styling}
+            nodeType={nodeType}
+            expanded={expanded}
+            onClick={this.handleExpandClick}
+          />
+        }
+        {treeNode}
+      </div>
     );
   }
 

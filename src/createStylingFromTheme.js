@@ -55,9 +55,10 @@ const getDefaultThemeStyling = theme => {
         WebkitUserSelect: 'text',
         MozUserSelect: 'text',
         wordWrap: 'break-word',
-        paddingLeft: keyPath.length > 1 ? '2.125em' : '1.25em',
+        paddingLeft: keyPath.length > 1 ? '1.3em' : '1em',
         textIndent: '-0.5em',
-        wordBreak: 'break-all'
+        wordBreak: 'break-all',
+        textAlign: 'center'
       }
     }),
 
@@ -85,22 +86,19 @@ const getDefaultThemeStyling = theme => {
       }
     }),
 
-    arrow: ({ style }, nodeType, expanded) => ({
+    arrow: ({ style }) => ({
       style: {
         ...style,
         marginLeft: 0,
         transition: '150ms',
         WebkitTransition: '150ms',
         MozTransition: '150ms',
-        WebkitTransform: expanded ? 'rotateZ(90deg)' : 'rotateZ(0deg)',
-        MozTransform: expanded ? 'rotateZ(90deg)' : 'rotateZ(0deg)',
-        transform: expanded ? 'rotateZ(90deg)' : 'rotateZ(0deg)',
         transformOrigin: '45% 50%',
         WebkitTransformOrigin: '45% 50%',
         MozTransformOrigin: '45% 50%',
         position: 'relative',
         lineHeight: '1.1em',
-        fontSize: '0.75em'
+        fontSize: 13
       }
     }),
 
@@ -108,9 +106,13 @@ const getDefaultThemeStyling = theme => {
       style: {
         ...style,
         display: 'inline-block',
-        paddingRight: '0.5em',
         paddingLeft: arrowStyle === 'double' ? '1em' : 0,
-        cursor: 'pointer'
+        cursor: 'pointer',
+        fontSize: 13,
+        width: 16,
+        position: 'relative',
+        top: 2,
+        textAlign: 'center'
       }
     }),
 
@@ -130,12 +132,13 @@ const getDefaultThemeStyling = theme => {
         position: 'relative',
         paddingTop: '0.25em',
         marginLeft: keyPath.length > 1 ? '0.875em' : 0,
-        paddingLeft: !expandable ? '1.125em' : 0
+        paddingLeft: !expandable ? '1.125em' : 3
       }
     }),
 
     rootNode: {
       padding: 0,
+      paddingLeft: 3,
       margin: 0
     },
 
