@@ -13,6 +13,7 @@ const JSONNode = ({
   value,
   valueRenderer,
   isCustomNode,
+  onNodeClick,
   ...rest
 }) => {
   const nodeType = isCustomNode(value) ? 'Custom' : objType(value);
@@ -25,7 +26,8 @@ const JSONNode = ({
     nodeType,
     styling,
     value,
-    valueRenderer
+    valueRenderer,
+    onNodeClick
   };
 
   const nestedNodeProps = {
@@ -72,7 +74,8 @@ JSONNode.propTypes = {
   styling: PropTypes.func.isRequired,
   value: PropTypes.any,
   valueRenderer: PropTypes.func.isRequired,
-  isCustomNode: PropTypes.func.isRequired
+  isCustomNode: PropTypes.func.isRequired,
+  onNodeClick: PropTypes.func
 };
 
 export default JSONNode;

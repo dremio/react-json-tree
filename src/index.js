@@ -61,7 +61,8 @@ export default class JSONTree extends React.Component {
     invertTheme: PropTypes.bool,
     keyPath: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
     postprocessValue: PropTypes.func,
-    sortObjectKeys: PropTypes.oneOfType([PropTypes.func, PropTypes.bool])
+    sortObjectKeys: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
+    onNodeClick: PropTypes.func
   };
 
   static defaultProps = {
