@@ -78,6 +78,7 @@ export default class JSONNestedNode extends React.Component {
     isCircular: PropTypes.bool,
     expandable: PropTypes.bool,
     onNodeClick: PropTypes.func,
+    onMouseOver: PropTypes.func,
     shouldToggleExpand: PropTypes.func
   };
 
@@ -192,7 +193,11 @@ export default class JSONNestedNode extends React.Component {
 
   handleMouseOver = (e) => {
     e.stopPropagation();
+    const { onMouseOver, keyPath, nodeType } = this.props;
     this.setState({ hover: true });
+    if (onMouseOver) {
+      onMouseOver(e, keyPath, nodeType);
+    }
   };
 
   handleMouseOut = () => this.setState({ hover: false });
