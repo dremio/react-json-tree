@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-
 /**
  * Renders simple values (eg. strings, numbers, booleans, etc)
  */
@@ -14,6 +13,8 @@ export default class JSONValueNode extends React.Component {
     ).isRequired,
     valueRenderer: PropTypes.func.isRequired,
     value: PropTypes.any,
+    isRootTypeOfNodeIsArray: PropTypes.bool,
+    isNotAllowExtractNestedItemOfList: PropTypes.bool,
     valueGetter: PropTypes.func,
     onNodeClick: PropTypes.func,
     onMouseOver: PropTypes.func
@@ -25,14 +26,23 @@ export default class JSONValueNode extends React.Component {
 
   state = { hover: false };
 
+  isShouldExtract = () => {
+    const { isRootTypeOfNodeIsArray, isNotAllowExtractNestedItemOfList, keyPath } = this.props;
+    const isNestedListChildren = isRootTypeOfNodeIsArray && isNotAllowExtractNestedItemOfList &&
+                                 keyPath.length > 1;
+    if (isNestedListChildren) {
+      return false;
+    }
+    return this.state.hover;
+  }
+
   render() {
-    const { hover } = this.state;
     const {
       nodeType, styling, labelRenderer, keyPath, valueRenderer, value, valueGetter
     } = this.props;
     return (
       <li
-        {...styling('value', nodeType, keyPath, hover)}
+        {...styling('value', nodeType, keyPath, this.isShouldExtract())}
         onClick={this.handleNodeClick}
         onMouseOver={this.handleMouseOver}
         onMouseOut={this.handleMouseOut}
@@ -49,8 +59,9 @@ export default class JSONValueNode extends React.Component {
 
   handleNodeClick = (e) => {
     const { onNodeClick, keyPath, nodeType } = this.props;
+
     e.stopPropagation();
-    if (onNodeClick) {
+    if (onNodeClick && this.isShouldExtract()) {
       onNodeClick(e, keyPath, nodeType);
     }
   };

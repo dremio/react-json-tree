@@ -77,6 +77,8 @@ export default class JSONNestedNode extends React.Component {
     sortObjectKeys: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
     isCircular: PropTypes.bool,
     expandable: PropTypes.bool,
+    isRootTypeOfNodeIsArray: PropTypes.bool,
+    isNotAllowExtractNestedItemOfList: PropTypes.bool,
     onNodeClick: PropTypes.func,
     onMouseOver: PropTypes.func,
     shouldToggleExpand: PropTypes.func
@@ -106,6 +108,16 @@ export default class JSONNestedNode extends React.Component {
 
   shouldComponentUpdate = shouldPureComponentUpdate;
 
+  isShouldExtract = () => {
+    const { isRootTypeOfNodeIsArray, isNotAllowExtractNestedItemOfList, keyPath } = this.props;
+    const isNestedListChildren = isRootTypeOfNodeIsArray && isNotAllowExtractNestedItemOfList &&
+                                 keyPath.length > 1;
+    if (isNestedListChildren) {
+      return false;
+    }
+    return this.state.hover;
+  }
+
   render() {
     const {
       getItemString,
@@ -118,9 +130,9 @@ export default class JSONNestedNode extends React.Component {
       collectionLimit,
       keyPath,
       labelRenderer,
-      expandable,
+      expandable
     } = this.props;
-    const { expanded, hover } = this.state;
+    const { expanded } = this.state;
     const renderedChildren = expanded || (hideRoot && this.props.level === 0) ?
       renderChildNodes({ ...this.props, level: this.props.level + 1 }) : null;
 
@@ -135,7 +147,8 @@ export default class JSONNestedNode extends React.Component {
       itemType,
       createItemString(data, collectionLimit)
     );
-    const stylingArgs = [keyPath, nodeType, expanded, expandable, hover];
+
+    const stylingArgs = [keyPath, nodeType, expanded, expandable, this.isShouldExtract()];
 
     return hideRoot ? (
       <li {...styling('rootNode', ...stylingArgs)} onClick={this.handleNodeClick}>
@@ -180,7 +193,7 @@ export default class JSONNestedNode extends React.Component {
   handleNodeClick = (e) => {
     const { onNodeClick, keyPath, nodeType } = this.props;
     e.stopPropagation();
-    if (onNodeClick) {
+    if (onNodeClick && this.isShouldExtract()) {
       onNodeClick(e, keyPath, nodeType);
     }
   };

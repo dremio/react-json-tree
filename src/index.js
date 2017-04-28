@@ -6,6 +6,7 @@
 import React, { PropTypes } from 'react';
 import JSONNode from './JSONNode';
 import createStylingFromTheme from './createStylingFromTheme';
+import objType from './objType';
 
 const identity = value => value;
 
@@ -54,6 +55,7 @@ export default class JSONTree extends React.Component {
       PropTypes.object
     ]).isRequired,
     hideRoot: PropTypes.bool,
+    isNotAllowExtractNestedItemOfList: PropTypes.bool,
     theme: PropTypes.oneOfType([
       PropTypes.object,
       PropTypes.string
@@ -97,6 +99,8 @@ export default class JSONTree extends React.Component {
         <JSONNode
           {...{ postprocessValue, hideRoot, styling, ...rest }}
           keyPath={hideRoot ? [] : keyPath}
+          isRootTypeOfNodeIsArray={objType(value) === 'Array'}
+          isNotAllowExtractNestedItemOfList={this.props.isNotAllowExtractNestedItemOfList}
           value={postprocessValue(value)}
         />
       </ul>
