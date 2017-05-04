@@ -77,6 +77,7 @@ export default class JSONNestedNode extends React.Component {
     sortObjectKeys: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
     isCircular: PropTypes.bool,
     expandable: PropTypes.bool,
+    maxClickableNodeDepth: PropTypes.number,
     onNodeClick: PropTypes.func,
     onMouseOver: PropTypes.func,
     shouldToggleExpand: PropTypes.func
@@ -178,7 +179,11 @@ export default class JSONNestedNode extends React.Component {
   }
 
   handleNodeClick = (e) => {
-    const { onNodeClick, keyPath, nodeType } = this.props;
+    const { onNodeClick, keyPath, nodeType, maxClickableNodeDepth } = this.props;
+    if (maxClickableNodeDepth && keyPath.length > maxClickableNodeDepth) {
+      return;
+    }
+
     e.stopPropagation();
     if (onNodeClick) {
       onNodeClick(e, keyPath, nodeType);
@@ -192,8 +197,12 @@ export default class JSONNestedNode extends React.Component {
   };
 
   handleMouseOver = (e) => {
+    const { onMouseOver, keyPath, nodeType, maxClickableNodeDepth } = this.props;
+    if (maxClickableNodeDepth && keyPath.length > maxClickableNodeDepth) {
+      return;
+    }
+
     e.stopPropagation();
-    const { onMouseOver, keyPath, nodeType } = this.props;
     this.setState({ hover: true });
     if (onMouseOver) {
       onMouseOver(e, keyPath, nodeType);

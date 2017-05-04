@@ -54,6 +54,7 @@ export default class JSONTree extends React.Component {
       PropTypes.object
     ]).isRequired,
     hideRoot: PropTypes.bool,
+    maxClickableNodeDepth: PropTypes.number,
     theme: PropTypes.oneOfType([
       PropTypes.object,
       PropTypes.string
@@ -97,6 +98,7 @@ export default class JSONTree extends React.Component {
         <JSONNode
           {...{ postprocessValue, hideRoot, styling, ...rest }}
           keyPath={hideRoot ? [] : keyPath}
+          maxClickableNodeDepth={this.props.maxClickableNodeDepth}
           value={postprocessValue(value)}
         />
       </ul>

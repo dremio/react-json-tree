@@ -15,6 +15,7 @@ const JSONNode = ({
   isCustomNode,
   onNodeClick,
   onMouseOver,
+  maxClickableNodeDepth,
   ...rest
 }) => {
   const nodeType = isCustomNode(value) ? 'Custom' : objType(value);
@@ -29,7 +30,8 @@ const JSONNode = ({
     value,
     valueRenderer,
     onNodeClick,
-    onMouseOver
+    onMouseOver,
+    maxClickableNodeDepth
   };
 
   const nestedNodeProps = {
@@ -75,6 +77,7 @@ JSONNode.propTypes = {
   labelRenderer: PropTypes.func.isRequired,
   styling: PropTypes.func.isRequired,
   value: PropTypes.any,
+  maxClickableNodeDepth: PropTypes.number,
   valueRenderer: PropTypes.func.isRequired,
   isCustomNode: PropTypes.func.isRequired,
   onNodeClick: PropTypes.func,

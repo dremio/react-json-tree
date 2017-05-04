@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-
 /**
  * Renders simple values (eg. strings, numbers, booleans, etc)
  */
@@ -14,6 +13,7 @@ export default class JSONValueNode extends React.Component {
     ).isRequired,
     valueRenderer: PropTypes.func.isRequired,
     value: PropTypes.any,
+    maxClickableNodeDepth: PropTypes.number,
     valueGetter: PropTypes.func,
     onNodeClick: PropTypes.func,
     onMouseOver: PropTypes.func
@@ -30,6 +30,7 @@ export default class JSONValueNode extends React.Component {
     const {
       nodeType, styling, labelRenderer, keyPath, valueRenderer, value, valueGetter
     } = this.props;
+
     return (
       <li
         {...styling('value', nodeType, keyPath, hover)}
@@ -48,7 +49,11 @@ export default class JSONValueNode extends React.Component {
   }
 
   handleNodeClick = (e) => {
-    const { onNodeClick, keyPath, nodeType } = this.props;
+    const { onNodeClick, keyPath, nodeType, maxClickableNodeDepth } = this.props;
+    if (maxClickableNodeDepth && keyPath.length > maxClickableNodeDepth) {
+      return;
+    }
+
     e.stopPropagation();
     if (onNodeClick) {
       onNodeClick(e, keyPath, nodeType);
@@ -56,8 +61,12 @@ export default class JSONValueNode extends React.Component {
   };
 
   handleMouseOver = (e) => {
+    const { onMouseOver, keyPath, nodeType, maxClickableNodeDepth } = this.props;
+    if (maxClickableNodeDepth && keyPath.length > maxClickableNodeDepth) {
+      return;
+    }
+
     e.stopPropagation();
-    const { onMouseOver, keyPath, nodeType } = this.props;
     this.setState({ hover: true });
     if (onMouseOver) {
       onMouseOver(e, keyPath, nodeType);
