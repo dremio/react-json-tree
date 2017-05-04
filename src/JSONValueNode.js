@@ -13,8 +13,7 @@ export default class JSONValueNode extends React.Component {
     ).isRequired,
     valueRenderer: PropTypes.func.isRequired,
     value: PropTypes.any,
-    isRootTypeOfNodeIsArray: PropTypes.bool,
-    isNotAllowExtractNestedItemOfList: PropTypes.bool,
+    maxClickableNodeDepth: PropTypes.number,
     valueGetter: PropTypes.func,
     onNodeClick: PropTypes.func,
     onMouseOver: PropTypes.func
@@ -26,23 +25,17 @@ export default class JSONValueNode extends React.Component {
 
   state = { hover: false };
 
-  isShouldExtract = () => {
-    const { isRootTypeOfNodeIsArray, isNotAllowExtractNestedItemOfList, keyPath } = this.props;
-    const isNestedListChildren = isRootTypeOfNodeIsArray && isNotAllowExtractNestedItemOfList &&
-                                 keyPath.length > 1;
-    if (isNestedListChildren) {
-      return false;
-    }
-    return this.state.hover;
-  }
-
   render() {
     const {
-      nodeType, styling, labelRenderer, keyPath, valueRenderer, value, valueGetter
+      nodeType, styling, labelRenderer, keyPath, valueRenderer,
+      value, valueGetter, maxClickableNodeDepth
     } = this.props;
+    const hover = maxClickableNodeDepth && keyPath.length > maxClickableNodeDepth
+      ? false
+      : this.state.hover;
     return (
       <li
-        {...styling('value', nodeType, keyPath, this.isShouldExtract())}
+        {...styling('value', nodeType, keyPath, hover)}
         onClick={this.handleNodeClick}
         onMouseOver={this.handleMouseOver}
         onMouseOut={this.handleMouseOut}
@@ -58,17 +51,24 @@ export default class JSONValueNode extends React.Component {
   }
 
   handleNodeClick = (e) => {
-    const { onNodeClick, keyPath, nodeType } = this.props;
+    const { onNodeClick, keyPath, nodeType, maxClickableNodeDepth } = this.props;
+    if (maxClickableNodeDepth && keyPath.length > maxClickableNodeDepth) {
+      return;
+    }
 
     e.stopPropagation();
-    if (onNodeClick && this.isShouldExtract()) {
+    if (onNodeClick) {
       onNodeClick(e, keyPath, nodeType);
     }
   };
 
   handleMouseOver = (e) => {
+    const { onMouseOver, keyPath, nodeType, maxClickableNodeDepth } = this.props;
+    if (maxClickableNodeDepth && keyPath.length > maxClickableNodeDepth) {
+      return;
+    }
+
     e.stopPropagation();
-    const { onMouseOver, keyPath, nodeType } = this.props;
     this.setState({ hover: true });
     if (onMouseOver) {
       onMouseOver(e, keyPath, nodeType);

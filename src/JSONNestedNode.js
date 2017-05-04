@@ -77,8 +77,7 @@ export default class JSONNestedNode extends React.Component {
     sortObjectKeys: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
     isCircular: PropTypes.bool,
     expandable: PropTypes.bool,
-    isRootTypeOfNodeIsArray: PropTypes.bool,
-    isNotAllowExtractNestedItemOfList: PropTypes.bool,
+    maxClickableNodeDepth: PropTypes.number,
     onNodeClick: PropTypes.func,
     onMouseOver: PropTypes.func,
     shouldToggleExpand: PropTypes.func
@@ -108,16 +107,6 @@ export default class JSONNestedNode extends React.Component {
 
   shouldComponentUpdate = shouldPureComponentUpdate;
 
-  isShouldExtract = () => {
-    const { isRootTypeOfNodeIsArray, isNotAllowExtractNestedItemOfList, keyPath } = this.props;
-    const isNestedListChildren = isRootTypeOfNodeIsArray && isNotAllowExtractNestedItemOfList &&
-                                 keyPath.length > 1;
-    if (isNestedListChildren) {
-      return false;
-    }
-    return this.state.hover;
-  }
-
   render() {
     const {
       getItemString,
@@ -130,7 +119,8 @@ export default class JSONNestedNode extends React.Component {
       collectionLimit,
       keyPath,
       labelRenderer,
-      expandable
+      expandable,
+      maxClickableNodeDepth
     } = this.props;
     const { expanded } = this.state;
     const renderedChildren = expanded || (hideRoot && this.props.level === 0) ?
@@ -147,8 +137,10 @@ export default class JSONNestedNode extends React.Component {
       itemType,
       createItemString(data, collectionLimit)
     );
-
-    const stylingArgs = [keyPath, nodeType, expanded, expandable, this.isShouldExtract()];
+    const hover = maxClickableNodeDepth && keyPath.length > maxClickableNodeDepth
+      ? false
+      : this.state.hover;
+    const stylingArgs = [keyPath, nodeType, expanded, expandable, hover];
 
     return hideRoot ? (
       <li {...styling('rootNode', ...stylingArgs)} onClick={this.handleNodeClick}>
@@ -191,9 +183,13 @@ export default class JSONNestedNode extends React.Component {
   }
 
   handleNodeClick = (e) => {
-    const { onNodeClick, keyPath, nodeType } = this.props;
+    const { onNodeClick, keyPath, nodeType, maxClickableNodeDepth } = this.props;
+    if (maxClickableNodeDepth && keyPath.length > maxClickableNodeDepth) {
+      return;
+    }
+
     e.stopPropagation();
-    if (onNodeClick && this.isShouldExtract()) {
+    if (onNodeClick) {
       onNodeClick(e, keyPath, nodeType);
     }
   };
@@ -205,8 +201,12 @@ export default class JSONNestedNode extends React.Component {
   };
 
   handleMouseOver = (e) => {
+    const { onMouseOver, keyPath, nodeType, maxClickableNodeDepth } = this.props;
+    if (maxClickableNodeDepth && keyPath.length > maxClickableNodeDepth) {
+      return;
+    }
+
     e.stopPropagation();
-    const { onMouseOver, keyPath, nodeType } = this.props;
     this.setState({ hover: true });
     if (onMouseOver) {
       onMouseOver(e, keyPath, nodeType);
