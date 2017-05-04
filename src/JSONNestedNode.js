@@ -120,9 +120,8 @@ export default class JSONNestedNode extends React.Component {
       keyPath,
       labelRenderer,
       expandable,
-      maxClickableNodeDepth
     } = this.props;
-    const { expanded } = this.state;
+    const { expanded, hover } = this.state;
     const renderedChildren = expanded || (hideRoot && this.props.level === 0) ?
       renderChildNodes({ ...this.props, level: this.props.level + 1 }) : null;
 
@@ -137,9 +136,6 @@ export default class JSONNestedNode extends React.Component {
       itemType,
       createItemString(data, collectionLimit)
     );
-    const hover = maxClickableNodeDepth && keyPath.length > maxClickableNodeDepth
-      ? false
-      : this.state.hover;
     const stylingArgs = [keyPath, nodeType, expanded, expandable, hover];
 
     return hideRoot ? (

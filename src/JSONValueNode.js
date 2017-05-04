@@ -26,13 +26,11 @@ export default class JSONValueNode extends React.Component {
   state = { hover: false };
 
   render() {
+    const { hover } = this.state;
     const {
-      nodeType, styling, labelRenderer, keyPath, valueRenderer,
-      value, valueGetter, maxClickableNodeDepth
+      nodeType, styling, labelRenderer, keyPath, valueRenderer, value, valueGetter
     } = this.props;
-    const hover = maxClickableNodeDepth && keyPath.length > maxClickableNodeDepth
-      ? false
-      : this.state.hover;
+
     return (
       <li
         {...styling('value', nodeType, keyPath, hover)}
