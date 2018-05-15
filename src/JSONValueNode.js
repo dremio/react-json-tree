@@ -1,4 +1,6 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
+
 /**
  * Renders simple values (eg. strings, numbers, booleans, etc)
  */

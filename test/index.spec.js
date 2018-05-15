@@ -1,6 +1,6 @@
 import React from 'react';
 import expect from 'expect';
-import { createRenderer } from 'react-addons-test-utils';
+import ShallowRenderer from 'react-test-renderer/shallow';
 
 import JSONTree from '../src/index';
 import JSONNode from '../lib/JSONNode';
@@ -8,7 +8,7 @@ import JSONNode from '../lib/JSONNode';
 const BASIC_DATA = { a: 1, b: 'c' };
 
 function render(component) {
-  const renderer = createRenderer();
+  const renderer = new ShallowRenderer();
   renderer.render(component);
   return renderer.getRenderOutput();
 }
